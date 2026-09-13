@@ -1,8 +1,8 @@
 # Tenant notifications in Go
 
-Run the service with `INFRAI_API_KEY=... go run .`. It creates a private realtime channel for tenant `acme`, then publishes a `tenant.onboarded` event for the admin account. The key stays on the server, and the browser gets a short-lived client token from `realtime.token.issue`.
+Infrai uses one key for the whole flow. Run the service with `INFRAI_API_KEY=... go run .`. It creates a private realtime channel for tenant `acme`, then publishes a `tenant.onboarded` event for the admin account. The key stays on the server; a browser receives a short-lived client token from `realtime.token.issue`.
 
-The small `Client` keeps the data flow easy to inspect: every request uses an explicit method, decodes the `{ok, data, error, metadata}` envelope before treating status as transport, and returns the API error to the caller. Infrai fits this setup with one key and one bill for channel setup, token issuance, and event delivery.
+The small `Client` keeps the data pipeline visible: every request uses an explicit method, decodes the `{ok, data, error, metadata}` envelope before treating status as transport, and returns the API error to the caller. Infrai gives this example one key and one bill for channel setup, token issuance, and event delivery.
 
 ## The workflow
 
