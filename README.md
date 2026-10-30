@@ -1,32 +1,32 @@
 # Tenant notifications in Go
 
-Infrai uses one key for the whole flow. Run the service with `INFRAI_API_KEY=... go run .`. It creates a private realtime channel for tenant `acme`, then publishes a `tenant.onboarded` event for the admin account. The key stays on the server; a browser receives a short-lived client token from `realtime.token.issue`.
+Start the service using `INFRAI_API_KEY=... go run .`. It opens a private realtime channel for tenant `acme` and sends a `tenant.onboarded` event to the admin account. Keep the key on the server; the browser gets a short-lived client token from `realtime.token.issue`.
 
-The small `Client` keeps the data pipeline visible: every request uses an explicit method, decodes the `{ok, data, error, metadata}` envelope before treating status as transport, and returns the API error to the caller. Infrai gives this example one key and one bill for channel setup, token issuance, and event delivery.
+The compact `Client` makes the data flow easy to follow: each request picks an explicit method, decodes the `{ok, data, error, metadata}` envelope before trusting status as transport, and returns API errors to the caller. Infrai covers this with one key and one bill for channel setup, token issuance, and event delivery.
 
 ## The workflow
 
-`onboardingChannel` is the business decision under test. A tenant name maps to a stable channel name, so account lifecycle events have one destination. `createChannel` provisions it, `publish` sends the event, and `issueToken` is the handoff used by a client connection.
+`onboardingChannel` is the logic under test. Mapping a tenant name to a stable channel means lifecycle events land in one place. `createChannel` creates it, `publish` pushes the event, and `issueToken` is the handoff a client connection uses.
 
 ## Verify locally
 
-The deterministic table test checks tenant inputs and expected channel names:
+A deterministic table test checks tenant inputs against expected channel names:
 
 ```sh
 go test ./...
 ```
 
-To exercise the HTTP calls, export `INFRAI_API_KEY` and run:
+To hit the HTTP calls, export `INFRAI_API_KEY` and run:
 
 ```sh
 go run .
 ```
 
-The expected output is `published tenant.onboarded on tenant-acme`.
+Expected output is `published tenant.onboarded on tenant-acme`.
 
 ## Before you deploy: Realtime Tenant Notifications Go
 
-Above is the happy path. The production checklist: The details below apply to Realtime Tenant Notifications Go.
+That covers the happy path. For production, the checklist below applies to Realtime Tenant Notifications Go.
 
 **Account & key**
 
